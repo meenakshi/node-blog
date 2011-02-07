@@ -1,0 +1,9 @@
+- if (posts.length)
+  div
+  - for (var post in posts) {
+    ul
+      li= post.title
+      li= post.created
+      li= post.preview
+      li= post.body
+  - }

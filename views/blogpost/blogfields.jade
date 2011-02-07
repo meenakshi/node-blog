@@ -1,0 +1,16 @@
+div
+  label Title:
+    input(name='blogpost[title]', value=post.title || '')
+div
+  label Previewtext:
+    textarea(name='blogpost[preview]')
+      =post.preview || ''
+div
+  label Text:
+    textarea(name='blogpost[body]')
+      =post.body || ''
+div
+  label Tags:
+    input(name='blogpost[tags]', value=post.tags || '')
+div
+  input(type='submit', value='Save')

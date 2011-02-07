@@ -1,0 +1,5 @@
+h2 Edit Post
+form(method='post', action='/post/' + post.doc.id)
+  input(name='blogpost[id]', value=post.doc.id, type='hidden')
+  input(name='_method', value='PUT', type='hidden')
+  != partial('blogfields', { post: post.doc })
