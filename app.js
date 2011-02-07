@@ -49,7 +49,7 @@ models.defineModels(mongoose, function() {
 // index route, load page 1 of blog
 app.get('/', function(req, res){
   // find first 10 blogposts
-  BlogPost.find().limit(10).sort('created', -1).select(function(err, posts) {
+  BlogPost.find().limit(10).sort('created', -1).run(function(err, posts) {
     res.render('index', {
       posts: posts
     });

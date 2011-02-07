@@ -1,9 +1,9 @@
 - if (posts.length)
   div
-  - for (var post in posts) {
+  - for (var p in posts) {
     ul
-      li= post.title
-      li= post.created
-      li= post.preview
-      li= post.body
+      li= posts[p].title
+      li= posts[p].created
+      li= posts[p].preview
+      li= posts[p].body
   - }
