@@ -3,19 +3,28 @@
 var express = require('express'),
   mongoose = require('mongoose'),
   models = require('./models'),
+  inspect = require('inspect'),
   db,
   BlogPost;
 
 // create server object
 var app = module.exports = express.createServer();
 
+//set helper libraries
+app.helpers(require('./helpers.js').helpers);
+app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
+
 // configure server instance
 app.configure(function(){
   app.set('views', __dirname + '/views');
+  // set jade as default view engine
   app.set('view engine', 'jade');
   app.use(express.bodyDecoder());
+  app.use(express.cookieDecoder());
+  app.use(express.session({ secret: 'DFKhsdhfus9(JN)(*ri3n9n' }));
   app.use(express.methodOverride());
   app.use(app.router);
+  // use express logger
   app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
   app.use(express.staticProvider(__dirname + '/public'));
 });
@@ -45,7 +54,6 @@ models.defineModels(mongoose, function() {
 });
 
 // Routes
-
 // index route, load page 1 of blog
 app.get('/', function(req, res){
   // find first 10 blogposts
@@ -85,10 +93,29 @@ app.get('/tags/:tag', function(req, res) {
 
 // tag list route
 app.get('/tags', function(req, res) {
-  // find all tags
+  // find all tags using mapreduce
+  var map = function() {
+    if (!this.tags)
+      return;
+    for (idx in this.tags) {
+      emit(this.tags[idx], 1);
+    }
+  };
+  var reduce = function(prev, curr) {
+    var count = 0;
+    for (idx in curr)
+      count += curr[idx];
+    return count;
+  };
   
-  res.render('taglist', {
-    title: 'Taglist'
+  BlogPost.collection.mapReduce(map, reduce, { out: 'tags' }, function(err, collection) {
+    db.connection.collection('tags').find(function(err, cursor) {
+      cursor.toArray(function(err, tags) {
+        res.render('taglist', {
+          tags: tags
+        });
+      });
+    });
   });
 });
 
@@ -142,5 +169,5 @@ app.get('/post/:id', function(req, res) {
 // Only listen on $ node app.js
 if (!module.parent) {
   app.listen(app.set('port'));
-  console.log("Express server listening on port %d", app.address().port)
+  console.log("Express server listening on port %d", app.address().port);
 }

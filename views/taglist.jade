@@ -1,2 +1,7 @@
-h1= title
-p Welcome to #{title}
+- if (tags.length)
+  div
+  - for (var t in tags) {
+    ul
+      li= tags[t]._id
+      li= tags[t].value
+  - }
