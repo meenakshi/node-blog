@@ -1,4 +1,4 @@
-- if (posts.length)
+- if (posts.length) {
 - for (var idx in posts) {
   div.post
     h2
@@ -13,4 +13,8 @@
         a(href=posts[idx].url)#{posts[idx].comments.length} Kommentare
     div.post-content
       =posts[idx].preview
+- }
+- } else {
+  div.noposts
+    |Keine Posts gefunden!
 - }

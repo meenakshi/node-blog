@@ -16,6 +16,8 @@ body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldse
 body
   background colors-background
   font 14px/22px Helvetica, Sans-Serif;
+a
+  text-decoration none
 
 @font-face
   font-family:'Delicious-Bold'
@@ -45,56 +47,34 @@ body
     letter-spacing 2px
     text-align center
   a
-    color: colors-lightbackground
-    text-decoration none
+    color colors-lightbackground
   ul#nav
     float left
-    margin 22px 0 0 24px
+    margin 22px 0 0 70px
     list-style none
-    li
+    li     
       float left
-      margin 0 0 0 45px
+    li.spacer
+      background colors-darkbackground
+    li.entry
+      font: bold 18px Delicious-Bold, Georgia, Serif
+      letter-spacing 2px
+      background colors-background
+      padding 7px 20px 7px 20px
       :firstchild
         margin 0
       a
+        color colors-darkbackground
         display block
   ul#subscribe
     float right
-    margin 22px 24px 0 0
+    margin 22px 33px 0 0
     list-style none
     li
       float left
       margin 0 0 0 32px
       a
         display block
-
-#footer-container
-  background colors-darkbackground
-  clear left
-  width 100%
-  overflow hidden
-  margin 0 auto
-  #footer   
-    padding 20px 22px 66px 22px
-    a
-      color: colors-lightbackground
-      text-decoration none
-      :hover
-        color: colors-fonttitle
-    h4
-      font: 22px Delicious-Bold, Georgia, Serif
-      letter-spacing 2px
-      margin 0 0 14px 0
-      color colors-lightbackground
-    #latest-posts
-      width 430px
-      float left
-      ul
-        list-style none
-        li
-          font-size 16px
-          color colors-lightbackground
-          margin 0 0 10px 0
 
 #side
   background colors-darkbackground
@@ -103,14 +83,17 @@ body
   margin-left -300px
   color: colors-fontbody
   #links
-    padding 15px
+    padding 5px 5px 0 15px
     h3
       color: colors-lightbackground
       font 22px Delicious-Bold, Georgia, Serif
       letter-spacing 2px
     a
+      font-size 16px
       color: colors-lightbackground
-      text-decoration none
+    dd
+      color: colors-mediumbackground
+      margin 0 0 0 13px
 
 #content
   width 100%
@@ -118,6 +101,8 @@ body
   
 #main
   margin-right 300px
+  .noposts
+    padding 7px 0 5px 20px;
   .post
     background colors-lightbackground
     position relative
@@ -129,7 +114,6 @@ body
       margin 0 0 10px 75px
       font 24px Delicious-Bold, Georgia, Serif
       a
-        text-decoration none
         color colors-fonttitle
         
     p.date
@@ -158,8 +142,34 @@ body
       li.comments
         padding 0 0 0 32px
         a
-          text-decoration none
           color: colors-fonttitle
     .post-content
       clear both
       padding 40px 0 0 0
+  
+#footer-container
+  background colors-darkbackground
+  clear left
+  width 100%
+  overflow hidden
+  margin 0 auto
+  #footer   
+    padding 20px 22px 66px 22px
+    a
+      color: colors-lightbackground
+      :hover
+        color: colors-fonttitle
+    h4
+      font: 22px Delicious-Bold, Georgia, Serif
+      letter-spacing 2px
+      margin 0 0 14px 0
+      color colors-lightbackground
+    #latest-posts
+      width 430px
+      float left
+      ul
+        list-style none
+        li
+          font-size 16px
+          color colors-lightbackground
+          margin 0 0 10px 0

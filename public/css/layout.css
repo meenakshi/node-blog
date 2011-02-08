@@ -1,39 +1,44 @@
 body,div,h1,h2,h3,h4,h5,h6,p,ul,ol,li,dl,dt,dd,img,form,fieldset,blockquote{margin:0;padding:0;border:0}
 body{background:#fff9d3;font:14px / 22px Helvetica,Sans-Serif}
+a{text-decoration:none}
 @font-face{font-family:"Delicious-Bold";src:url("/images/Delicious-Bold.otf") format("opentype")}
 #container{margin:0 auto}
 #header{width:100%;background:#6b6a63;margin:0 auto;overflow:hidden;position:relative;color:#eae8d8;}
 #header h1{min-width:500px;text-align:center;font:30px Delicious-Bold,Georgia,Serif;letter-spacing:2px;clear:both}
 #header h2{margin:10px 0 0 0;min-width:500px;clear:both;font:18px Delicious-Bold,Georgia,Serif;letter-spacing:2px;text-align:center}
-#header a{color:#eae8d8;text-decoration:none}
-#header ul#nav{float:left;margin:22px 0 0 24px;list-style:none;}
-#header ul#nav li{float:left;margin:0 0 0 45px;}
-#header ul#nav li :firstchild{margin:0}
-#header ul#nav li a{display:block}
-#header ul#subscribe{float:right;margin:22px 24px 0 0;list-style:none;}
+#header a{color:#eae8d8}
+#header ul#nav{float:left;margin:22px 0 0 70px;list-style:none;}
+#header ul#nav li{float:left}
+#header ul#nav li.spacer{background:#6b6a63}
+#header ul#nav li.entry{font:bold 18px Delicious-Bold,Georgia,Serif;letter-spacing:2px;background:#fff9d3;padding:7px 20px 7px 20px;}
+#header ul#nav li.entry :firstchild{margin:0}
+#header ul#nav li.entry a{color:#6b6a63;display:block}
+#header ul#subscribe{float:right;margin:22px 33px 0 0;list-style:none;}
 #header ul#subscribe li{float:left;margin:0 0 0 32px;}
 #header ul#subscribe li a{display:block}
-#footer-container{background:#6b6a63;clear:left;width:100%;overflow:hidden;margin:0 auto;}
-#footer-container #footer{padding:20px 22px 66px 22px;}
-#footer-container #footer a{color:#eae8d8;text-decoration:none;}
-#footer-container #footer a :hover{color:#4e1313}
-#footer-container #footer h4{font:22px Delicious-Bold,Georgia,Serif;letter-spacing:2px;margin:0 0 14px 0;color:#eae8d8}
-#footer-container #footer #latest-posts{width:430px;float:left;}
-#footer-container #footer #latest-posts ul{list-style:none;}
-#footer-container #footer #latest-posts ul li{font-size:16px;color:#eae8d8;margin:0 0 10px 0}
 #side{background:#6b6a63;float:left;width:300px;margin-left:-300px;color:#1c1c1a;}
-#side #links{padding:15px;}
+#side #links{padding:5px 5px 0 15px;}
 #side #links h3{color:#eae8d8;font:22px Delicious-Bold,Georgia,Serif;letter-spacing:2px}
-#side #links a{color:#eae8d8;text-decoration:none}
+#side #links a{font-size:16px;color:#eae8d8}
+#side #links dd{color:#b0aea2;margin:0 0 0 13px}
 #content{width:100%;float:left}
 #main{margin-right:300px;}
+#main .noposts{padding:7px 0 5px 20px}
 #main .post{background:#eae8d8;position:relative;margin:20px 20px 40px 20px;padding:7px 0 5px 20px;overflow:hidden;}
 #main .post h2{float:left;margin:0 0 10px 75px;font:24px Delicious-Bold,Georgia,Serif;}
-#main .post h2 a{text-decoration:none;color:#4e1313}
+#main .post h2 a{color:#4e1313}
 #main .post p.date{background:#b0aea2;position:absolute;left:20px;top:7;padding:4px 7px 4px 7px;font:bold 40px Helvetica,Sans-Serif;color:#1c1c1a;text-align:center;}
 #main .post p.date span{font:normal 20px Helvetica,Sans Serif;display:block;margin:-5px 0 0 0}
 #main .post ul.meta{float:right;list-style:none;margin:0 0 30px 75px;overflow:hidden;font:16px Helvetica,Sans-Serif;color:#b0aea2;}
 #main .post ul.meta li{float:left;margin:0 20px 0 0}
 #main .post ul.meta li.comments{padding:0 0 0 32px;}
-#main .post ul.meta li.comments a{text-decoration:none;color:#4e1313}
+#main .post ul.meta li.comments a{color:#4e1313}
 #main .post .post-content{clear:both;padding:40px 0 0 0}
+#footer-container{background:#6b6a63;clear:left;width:100%;overflow:hidden;margin:0 auto;}
+#footer-container #footer{padding:20px 22px 66px 22px;}
+#footer-container #footer a{color:#eae8d8;}
+#footer-container #footer a :hover{color:#4e1313}
+#footer-container #footer h4{font:22px Delicious-Bold,Georgia,Serif;letter-spacing:2px;margin:0 0 14px 0;color:#eae8d8}
+#footer-container #footer #latest-posts{width:430px;float:left;}
+#footer-container #footer #latest-posts ul{list-style:none;}
+#footer-container #footer #latest-posts ul li{font-size:16px;color:#eae8d8;margin:0 0 10px 0}
