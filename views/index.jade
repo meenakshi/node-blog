@@ -1,9 +1,16 @@
 - if (posts.length)
-  div
-  - for (var p in posts) {
-    ul
-      li= posts[p].title
-      li= posts[p].created
-      li= posts[p].preview
-      li= posts[p].body
-  - }
+- for (var idx in posts) {
+  div.post
+    h2
+      a(href=posts[idx].url)=posts[idx].title
+    p.date
+      =posts[idx].readableday
+      span
+        =posts[idx].readablemonth
+    ul.meta
+      li.tagline Tags: #{posts[idx].tags.join(', ')}
+      li.comments
+        a(href=posts[idx].url)#{posts[idx].comments.length} Kommentare
+    div.post-content
+      =posts[idx].preview
+- }

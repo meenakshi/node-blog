@@ -1,0 +1,165 @@
+/*
+ * Define global colors
+ */
+colors-background = #fff9d3
+colors-darkbackground = #6b6a63
+colors-mediumbackground = #b0aea2
+colors-lightbackground = #eae8d8
+colors-fonttitle = #4e1313
+colors-fontbody = #1c1c1a
+
+body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldset, blockquote
+  margin 0
+  padding 0
+  border 0
+
+body
+  background colors-background
+  font 14px/22px Helvetica, Sans-Serif;
+
+@font-face
+  font-family:'Delicious-Bold'
+  src: url('/images/Delicious-Bold.otf') format('opentype')
+  
+#container
+  margin 0 auto
+
+#header
+  width 100%
+  background colors-darkbackground
+  margin 0 auto 
+  overflow hidden
+  position relative
+  color: colors-lightbackground
+  h1
+    min-width 500px
+    text-align center
+    font 30px Delicious-Bold, Georgia, Serif
+    letter-spacing 2px
+    clear both
+  h2
+    margin 10px 0 0 0
+    min-width 500px
+    clear both
+    font 18px Delicious-Bold, Georgia, Serif
+    letter-spacing 2px
+    text-align center
+  a
+    color: colors-lightbackground
+    text-decoration none
+  ul#nav
+    float left
+    margin 22px 0 0 24px
+    list-style none
+    li
+      float left
+      margin 0 0 0 45px
+      :firstchild
+        margin 0
+      a
+        display block
+  ul#subscribe
+    float right
+    margin 22px 24px 0 0
+    list-style none
+    li
+      float left
+      margin 0 0 0 32px
+      a
+        display block
+
+#footer-container
+  background colors-darkbackground
+  clear left
+  width 100%
+  overflow hidden
+  margin 0 auto
+  #footer   
+    padding 20px 22px 66px 22px
+    a
+      color: colors-lightbackground
+      text-decoration none
+      :hover
+        color: colors-fonttitle
+    h4
+      font: 22px Delicious-Bold, Georgia, Serif
+      letter-spacing 2px
+      margin 0 0 14px 0
+      color colors-lightbackground
+    #latest-posts
+      width 430px
+      float left
+      ul
+        list-style none
+        li
+          font-size 16px
+          color colors-lightbackground
+          margin 0 0 10px 0
+
+#side
+  background colors-darkbackground
+  float left
+  width 300px
+  margin-left -300px
+  color: colors-fontbody
+  #links
+    padding 15px
+    h3
+      color: colors-lightbackground
+      font 22px Delicious-Bold, Georgia, Serif
+      letter-spacing 2px
+    a
+      color: colors-lightbackground
+      text-decoration none
+
+#content
+  width 100%
+  float left
+  
+#main
+  margin-right 300px
+  .post
+    background colors-lightbackground
+    position relative
+    margin 20px 20px 40px 20px
+    padding 7px 0 5px 20px;
+    overflow hidden
+    h2
+      float left
+      margin 0 0 10px 75px
+      font 24px Delicious-Bold, Georgia, Serif
+      a
+        text-decoration none
+        color colors-fonttitle
+        
+    p.date
+      background colors-mediumbackground
+      position absolute
+      left 20px
+      top 7
+      padding 4px 7px 4px 7px
+      font bold 40px Helvetica, Sans-Serif
+      color: colors-fontbody
+      text-align center
+      span
+        font normal 20px Helvetica, Sans Serif
+        display block
+        margin -5px 0 0 0
+    ul.meta
+      float right
+      list-style none
+      margin 0 0 30px 75px
+      overflow hidden
+      font 16px Helvetica, Sans-Serif
+      color colors-mediumbackground
+      li
+        float left
+        margin 0 20px 0 0
+      li.comments
+        padding 0 0 0 32px
+        a
+          text-decoration none
+          color: colors-fonttitle
+    .post-content
+      clear both
+      padding 40px 0 0 0

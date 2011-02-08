@@ -1,14 +1,48 @@
-!!!
+!!! 5
 html
   head
-  	title #{nameAndVersion(appName, version)}
-    link(rel='stylesheet', href='/stylesheets/style.css')
+  	title 
+  	link(rel='stylesheet', href='/css/layout.css')
+    link(rel='stylesheet', href='/css/aristo/jquery-ui-1.8.7.custom.css')
+    script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js');
+    script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js')
+    script(type='text/javascript', src='/javascripts/lastfm.api.md5.js')
+    script(type='text/javascript', src='/javascripts/lastfm.api.js')
+    script(type='text/javascript', src='/javascripts/lastfm.api.cache.js')    
   body
     div#container
   	  div#header
-  	    ul
+  	    h1
+          a(href='/') schaermu.ch
+        h2 Schaermu's personal blog
+  	    ul#nav
   	      li
-  	        h1
-  	          a(href='/')#{nameAndVersion(appName, version)}
-  	  !{flashMessages}
-  	  != body
+  	        a(href='/') Blog
+  	      li
+  	        a(href='/contact') Kontakt
+  	    ul#subscribe
+          li.twitter
+  	        a(href='http://twitter.com/schaermu')|Follow on Twitter
+          li.rss
+            a(href='/rss')|Subscribe by RSS
+  	  div#content
+  	    div#main
+  	      !{flashMessages}
+  	      != body
+  	  div#side
+  	    div#links
+  	      h3 Links
+  	      dl
+  	        dt.crazymind
+  	          a(href='http://www.crazymind.ch/',target='_blank')|crazymind.ch
+  	  div#footer-container
+  	    div#footer
+  	      div#latest-posts
+  	        h4 Neuste Posts
+  	        ul
+  	      div#music
+  	        h4 Zuletzt gehört
+  	        div#lastfmdata
+  	      p#back-top
+  	        a(href='#')|Nach oben
+  	script(type='text/javascript', src='/javascripts/application.js')

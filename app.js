@@ -4,6 +4,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   models = require('./models'),
   inspect = require('inspect'),
+  stylus = require('stylus'),
+  sys = require('sys'),
   db,
   BlogPost;
 
@@ -14,11 +16,22 @@ var app = module.exports = express.createServer();
 app.helpers(require('./helpers.js').helpers);
 app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 
+function compile(str, path, fn) {
+  stylus(str)
+    .set('filename', path)
+    .set('compress', true)
+    .render(fn);
+}
+
 // configure server instance
 app.configure(function(){
   app.set('views', __dirname + '/views');
   // set jade as default view engine
   app.set('view engine', 'jade');
+  // set stylus as css compile engine
+  app.use(stylus.middleware(
+    { src: __dirname + '/stylus', dest: __dirname + '/public', compile: compile }
+  ));
   app.use(express.bodyDecoder());
   app.use(express.cookieDecoder());
   app.use(express.session({ secret: 'DFKhsdhfus9(JN)(*ri3n9n' }));
@@ -54,6 +67,28 @@ models.defineModels(mongoose, function() {
 });
 
 // Routes
+// service routes
+// fetch latest entries
+app.get('/rest/:format/latest', function(req, res) {
+  BlogPost.find({}, ['title', 'created', 'slug'], { limit: 5 }).sort('created', -1).run(function(err, posts) {
+    switch (req.params.format) {
+      case 'json':
+        var docs = [];
+        for (var i = 0; i < posts.length; i++) {
+          var doc = posts[i].doc;
+          doc.url = posts[i].url;
+          docs.push(doc);
+        }
+        res.send(docs);
+        break;
+      default:
+        
+        break;
+    }
+  });
+});
+
+
 // index route, load page 1 of blog
 app.get('/', function(req, res){
   // find first 10 blogposts
@@ -108,15 +143,8 @@ app.get('/tags', function(req, res) {
     return count;
   };
   
-  BlogPost.collection.mapReduce(map, reduce, { out: 'tags' }, function(err, collection) {
-    db.connection.collection('tags').find(function(err, cursor) {
-      cursor.toArray(function(err, tags) {
-        res.render('taglist', {
-          tags: tags
-        });
-      });
-    });
-  });
+  // TODO: implement some way to get mapReduce'd collection using mongoose
+  
 });
 
 // COMMENT: create comment
@@ -125,7 +153,7 @@ app.post('/:year/:month/:day/:slug/comment', function(req, res) {
 });
 
 // ADMIN: create new blog post
-app.post('/create', function(req, res) {
+app.post('/create', function(req, res) {  
   var post = new BlogPost();
   post.title = req.body.blogpost.title;
   post.preview = req.body.blogpost.preview;
@@ -133,9 +161,18 @@ app.post('/create', function(req, res) {
   post.created = new Date();
   post.modified = new Date();
   post.tags = req.body.blogpost.tags.split(',');
+  
+  function postCreationFailed() {
+    req.flash('error', 'Fehler beim Erstellen des Posts');
+    res.render('blogpost/create',{ latestposts: loadLatestPosts(), post: post });
+  }
 
   // TODO: slug is not generated properly, fix plugin function
   post.save(function(err) {
+    if (err) {
+      console.log(err);
+      return postCreationFailed();
+    }
     req.flash('info', 'Post created');
     res.redirect('/');
   });
@@ -164,6 +201,36 @@ app.get('/post/:id', function(req, res) {
     });
   });
 });
+
+//Error handling
+function NotFound(msg) {
+  this.name = 'NotFound';
+  Error.call(this, msg);
+  Error.captureStackTrace(this, arguments.callee);
+}
+
+sys.inherits(NotFound, Error);
+
+// This method will result in 500.jade being rendered
+app.get('/bad', function(req, res) {
+  unknownMethod();
+});
+
+app.error(function(err, req, res, next) {
+  if (err instanceof NotFound) {
+    res.render('404.jade', { status: 404 });
+  } else {
+    next(err);
+  }
+});
+
+app.error(function(err, req, res) {
+  res.render('500.jade', {
+    status: 500,
+    error: err
+  });
+});
+
 
 
 // Only listen on $ node app.js
