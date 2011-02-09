@@ -1,2 +1,13 @@
-h1= title
-p Welcome to #{title}
+div.post
+  .title
+    h2
+      a(href=post.url)=post.title      
+    span.tagline Tags: #{post.tags.join(', ')}
+  span.comments
+    a(href=post.url)#{post.comments.length} Kommentare
+  p.date
+    =post.readableday
+    span
+      =post.readablemonth
+  div.post-content
+    =post.body

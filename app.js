@@ -66,6 +66,37 @@ models.defineModels(mongoose, function() {
   db = mongoose.connect(app.set('connstring'));
 });
 
+//Error handling
+function NotFound(msg) {
+  this.name = 'NotFound';
+  Error.call(this, msg);
+  Error.captureStackTrace(this, arguments.callee);
+}
+
+sys.inherits(NotFound, Error);
+
+app.error(function(err, req, res, next) {
+  inspect(err);
+  if (err instanceof NotFound) {
+    res.render('404.jade', {
+      locals: {
+        status: 404
+      }
+    });
+  } else {
+    next(err);
+  }
+});
+
+app.error(function(err, req, res) {
+  res.render('500.jade', {
+    locals: {
+      status: 500,
+      error: err
+    }
+  });
+});
+
 // Routes
 // service routes
 // fetch latest entries
@@ -94,7 +125,9 @@ app.get('/', function(req, res){
   // find first 10 blogposts
   BlogPost.find().limit(10).sort('created', -1).run(function(err, posts) {
     res.render('index', {
-      posts: posts
+      locals: {
+        posts: posts        
+      }
     });
   });
 });
@@ -104,16 +137,40 @@ app.get('/page/:page/', function(req, res) {
   // find blogposts for page
   
   res.render('index', {
-    title: 'Paged Indexpage'
+    locals: {
+      title: 'Paged Indexpage'
+    }
   });
 });
 
 // detail route
-app.get('/:year/:month/:day/:slug', function(req, res) {
-  // find post by date and title
+app.get('/:year/:month/:day/:slug', function(req, res, next) {
+  // parse params as integers
+  var y = parseInt(req.params.year);
+  var m = parseInt(req.params.month.replace('0',''));
+  var d = parseInt(req.params.day.replace('0',''));
   
-  res.render('blogpost/detail', {
-    title: 'Detailview for Post'
+  // build search dates
+  var searchstart = new Date(y, m - 1, d);
+  var searchend = new Date(y, m - 1, d, 23, 59, 59);
+  
+  // find post by date and title
+  var whereparams = {
+      slug: req.params.slug,
+      created: { $gte: searchstart },
+      created: { $lte: searchend }
+  };
+  
+  BlogPost.findOne().where(whereparams).run(function(err, post) {
+    if (!post)
+      return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+    else {
+      res.render('blogpost/detail', {
+        locals: {
+          post: post
+        }
+      });
+    }
   });
 });
 
@@ -122,7 +179,9 @@ app.get('/tags/:tag', function(req, res) {
   // find blogposts matching requested tag
   
   res.render('index', {
-    title: 'Tagsearch Indexpage'
+    locals: {
+      title: 'Tagsearch Indexpage'      
+    }
   });
 });
 
@@ -164,10 +223,13 @@ app.post('/create', function(req, res) {
   
   function postCreationFailed() {
     req.flash('error', 'Fehler beim Erstellen des Posts');
-    res.render('blogpost/create',{ latestposts: loadLatestPosts(), post: post });
+    res.render('blogpost/create', {
+      locals: {
+        post: post
+      }
+    });
   }
 
-  // TODO: slug is not generated properly, fix plugin function
   post.save(function(err) {
     if (err) {
       console.log(err);
@@ -180,7 +242,9 @@ app.post('/create', function(req, res) {
 app.get('/create', function(req, res) {
   // TODO: implement basic authentication
   res.render('blogpost/create', {
-    post: new BlogPost()
+    locals: {
+      post: new BlogPost()
+    }
   });
 });
 
@@ -197,41 +261,12 @@ app.get('/post/:id', function(req, res) {
   // TODO: implement basic authentication
   Blogpost.findById(req.params.id, function(bp) {
     res.render('blogpost/update', {
-      post: bp
+      locals: {
+        post: bp
+      }      
     });
   });
 });
-
-//Error handling
-function NotFound(msg) {
-  this.name = 'NotFound';
-  Error.call(this, msg);
-  Error.captureStackTrace(this, arguments.callee);
-}
-
-sys.inherits(NotFound, Error);
-
-// This method will result in 500.jade being rendered
-app.get('/bad', function(req, res) {
-  unknownMethod();
-});
-
-app.error(function(err, req, res, next) {
-  if (err instanceof NotFound) {
-    res.render('404.jade', { status: 404 });
-  } else {
-    next(err);
-  }
-});
-
-app.error(function(err, req, res) {
-  res.render('500.jade', {
-    status: 500,
-    error: err
-  });
-});
-
-
 
 // Only listen on $ node app.js
 if (!module.parent) {
