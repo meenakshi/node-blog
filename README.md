@@ -12,7 +12,7 @@ as html template engine and [Stylus](https://github.com/LearnBoost/stylus) as cs
 as my personal blog!**
 
 ## Dependencies
-- node.js (tested using development branch, should run on stable npm release (`npm install node`))
+- node.js (tested using development branch, should run on stable release too)
 - mongoose (current stable, `npm install mongoose`)
 - express (current stable, `npm install express`)
   - *Sidenote*: the current stable branch of `connect` (express' http middleware) ships with
