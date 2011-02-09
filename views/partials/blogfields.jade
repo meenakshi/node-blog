@@ -1,16 +1,20 @@
-div
-  label Title:
-    input(name='blogpost[title]', value=post.title || '')
-div
-  label Previewtext:
-    textarea(name='blogpost[preview]')
-      =post.preview || ''
-div
-  label Text:
-    textarea(name='blogpost[body]')
-      =post.body || ''
-div
-  label Tags:
-    input(name='blogpost[tags]', value=post.tags || '')
-div
-  input(type='submit', value='Save')
+fieldset
+  legend= title
+  ol
+    li
+      label(for='blogpost[title]') Titel:
+      input(name='blogpost[title]', size=50, value=post.title || '')
+    li
+      label(for='blogpost[preview]') Anrisstext:
+      textarea(name='blogpost[preview]', rows=10, cols=50)
+        =post.preview || ''
+    li
+      label(for='blogpost[body]') Text:
+      textarea(name='blogpost[body]', rows=10, cols=70)
+        =post.body || ''
+    li
+      label(for='blogpost[tags]') Tags:
+      input(name='blogpost[tags]', size=50, value=post.tags || '')
+    li.submit
+      div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+        span#submit-button.ui-button-text Erstellen

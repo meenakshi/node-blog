@@ -126,7 +126,7 @@ app.get('/', function(req, res){
   BlogPost.find().limit(10).sort('created', -1).run(function(err, posts) {
     res.render('index', {
       locals: {
-        posts: posts        
+        posts: posts
       }
     });
   });

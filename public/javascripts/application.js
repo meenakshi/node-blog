@@ -22,13 +22,20 @@
     /* Load some artist info. */
     lastfm.user.getRecentTracks({ user: 'schaermu' }, { success: function(data){
           /* Use data. */
-          
+          console.log(data);
         }, error: function(code, message) {
           /* Show error message. */
         
         }
     });
+    
+    // hook up submit buttons to submit function
+    $('#submit-button').click(submitForm);
   });
+  
+  function submitForm() {
+    document.forms[0].submit();
+  }
   
   // manage flash messages
   function hideFlashMessages() {
