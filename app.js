@@ -215,6 +215,24 @@ app.get('/rest/:format/latest', function(req, res) {
   });
 });
 
+// rss feed route
+app.get('/rss', function(req, res, next) {
+  BlogPost.find().limit(50).sort('created', -1).run(function(err, posts) {
+    if (err)
+      return next(new Error('Fehler beim auslesen der Posts'));
+    else {
+      // render rss template using posts
+      res.render('xml/rss', {
+        layout: false,
+        selfclosetags: false,
+        locals: {
+          posts: posts
+        }
+      });
+    }    
+  });
+});
+
 /**
  * Public Blog routes
  */

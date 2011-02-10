@@ -25,7 +25,6 @@
           console.log(data);
         }, error: function(code, message) {
           /* Show error message. */
-        
         }
     });
     

@@ -1,0 +1,14 @@
+!!! xml
+rss(version="2.0")
+  channel
+    title|schaermu.ch - LHTN
+    description|Ein Blog über node.js, Javascript und neue Webtechnologien
+    link http://www.schaermu.ch/
+    - for (var i in posts) {
+    item
+      title= posts[i].title
+      description= posts[i].preview
+      link http://www.schaermu.ch#{posts[i].url}
+      guid= posts[i].id
+      pubDate= posts[i].created 
+    - }
