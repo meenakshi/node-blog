@@ -1,4 +1,4 @@
-form(method='post', action='/post/edit/' + post.id)
+form(method='post', action='/post/edit/' + post.id + '/')
   input(name='id', value=post.id, type='hidden')
   input(name='_method', value='PUT', type='hidden')
   != partial('blogfields', { locals: { post: post, title: 'Post bearbeiten' }})

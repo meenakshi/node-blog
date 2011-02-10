@@ -1,4 +1,4 @@
-div.post
+div.post.no-bottom-margin
   .title
     h2
       a(href=post.url)=post.title      
@@ -15,7 +15,39 @@ div.post
   div.admin
     ul
       li
-        a(href='/post/edit/' + post.id) Bearbeiten
+        a(href='/post/edit/' + post.id + '/') Bearbeiten
       li
         a.delete-post(href='#') L&ouml;schen
   - }
+div.new-comment
+  form(method='post', action='comment')
+    fieldset
+      legend|Neuer Kommentar
+      ol
+        li
+          label(for='comment[author]') Name:
+          input(name='comment[author]', size=50)
+        li
+          label(for='comment[title]') Titel:
+          input(name='comment[title]', size=50)
+        li
+          label(for='comment[body]') Kommentar:
+          textarea(name='comment[body]', rows=5, cols=40)
+        li.submit
+          div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+            span#submit-button.ui-button-text Senden
+- if (post.comments.length > 0) {
+.comments
+  - for (var idx in post.comments.toObject()) {
+  .comment
+    .title
+      h4
+        =post.comments[idx].title
+      span.author von #{post.comments[idx].author} um #{post.comments[idx].readabletime}
+      p.date
+        =post.comments[idx].readableday
+        span
+          =post.comments[idx].readablemonth
+    div.content=post.comments[idx].body
+  - }
+- }

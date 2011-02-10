@@ -85,7 +85,7 @@ a
   margin-left -300px
   color colors-fontbody
   #links
-    padding 5px 5px 0 15px
+    padding 5px 5px 15px 15px
     h3
       color colors-lightbackground
       font 22px Delicious-Bold, Georgia, Serif
@@ -100,30 +100,68 @@ a
 #content
   width 100%
   float left
-  
+ 
+p.date
+  background colors-mediumbackground
+  position absolute
+  left 20px
+  top 7
+  padding 4px 7px 4px 7px
+  font bold 32px Helvetica, Sans-Serif
+  color colors-fontbody
+  text-align center
+  span
+    font normal 18px Helvetica, Sans Serif
+    display block
+    margin -5px 0 0 0   
+            
 #main
   margin 0 320px 0 20px
+  .comments
+    padding 10px 0 10px 0
+    clear left
+    .comment
+      background colors-lightbackground
+      border 1px solid colors-mediumbackground
+      position relative
+      margin 15px 0 15px 0
+      padding 15px 15px 15px 20px;
+      overflow hidden
+      .title
+        float left
+        p.date
+          font bold 18px Helvetica, Sans-Serif
+          span
+            font normal 14px Helvetica, Sans Serif
+        h4
+          font bold 20px Delicious-Bold, Georgia, Serif
+          color colors-fonttitle
+          float left
+          margin 0 0 15px 50px
+          padding-top 10px    
+        span.author      
+          float left
+          margin 0 0 15px 7px
+          padding-top 12px
+          color colors-mediumbackground
+          font bold 18px Delicious-Bold, Georgia, Serif
+      div.content
+        clear both
+        padding 10px 0 0 0
+  .new-comment
+    float left
+    clear both
   .noposts
     padding 7px 0 5px 20px;
+  .no-bottom-margin
+    margin 20px 0 0 0 !important
   .post
+    border 1px solid colors-mediumbackground
     background colors-lightbackground
     position relative
     margin 20px 0 40px 0
     padding 15px 15px 15px 20px;
-    overflow hidden    
-    p.date
-      background colors-mediumbackground
-      position absolute
-      left 20px
-      top 7
-      padding 4px 7px 4px 7px
-      font bold 32px Helvetica, Sans-Serif
-      color colors-fontbody
-      text-align center
-      span
-        font normal 18px Helvetica, Sans Serif
-        display block
-        margin -5px 0 0 0    
+    overflow hidden
     .title        
       float left
       margin 0 0 8px 65px

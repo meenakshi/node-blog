@@ -1,2 +1,2 @@
-form(method='post', action='/create')
+form(method='post', action='/post/create')
   != partial('blogfields', { locals: { post: post.doc, title: 'Neuen Blogpost erfassen' }})

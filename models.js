@@ -3,6 +3,36 @@ var crypto = require('crypto');
 function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema,
       ObjectId = Schema.ObjectId;
+
+  /**
+   * Comment model
+   * 
+   * Used for persisting user comments
+   */
+  var Comment = new Schema({
+    author: String,
+    title: String,
+    date: Date,
+    body: String
+  });
+  
+  Comment.virtual('readableday')
+    .get(function() {
+      var day = this.date.getDate();      
+      return (day < 10 ? '0' + day : day);
+    });
+
+  Comment.virtual('readablemonth')
+    .get(function() {
+      return monthNamesShort[this.date.getMonth()];
+    });
+  
+  Comment.virtual('readabletime')
+    .get(function() {
+      var hour = this.date.getHours();
+      var minute = this.date.getMinutes();
+      return (hour < 10 ? '0' +  hour : hour) + ':' + (minute < 10 ? '0' +  minute : minute);
+    })
   
   /**
    * Blogpost model
@@ -37,7 +67,7 @@ function defineModels(mongoose, fn) {
       var year = this.created.getFullYear();
       var month = this.created.getMonth() + 1;
       var day = this.created.getDate();      
-      return '/' + year + '/' + (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + this.slug;
+      return '/' + year + '/' + (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + this.slug + '/';
     });
   
   BlogPost.virtual('readabledate')
@@ -73,17 +103,6 @@ function defineModels(mongoose, fn) {
   
   // attach slugGenerator plugin to BlogPost schema
   BlogPost.plugin(slugGenerator());
-  
-  /**
-   * Comment model
-   * 
-   * Used for persisting user comments
-   */
-  var Comment = new Schema({
-    author: String,
-    date: Date,
-    body: String
-  });
   
   /**
    * User model

@@ -242,25 +242,43 @@ app.get('/page/:page/', function(req, res) {
   });
 });
 
-// detail route
-app.get('/:year/:month/:day/:slug', function(req, res, next) {
-  // parse params as integers
-  var y = parseInt(req.params.year);
-  var m = parseInt(req.params.month.replace('0',''));
-  var d = parseInt(req.params.day.replace('0',''));
+function parseDateInts(params) {
+  var y = parseInt(params.year);
+  var m = parseInt(params.month.trimLeft('0'));
+  var d = parseInt(params.day.trimLeft('0'));
   
+  if (y === NaN || m === NaN || d === NaN)
+    return null;
+  
+  return {
+    y: y,
+    m: m,
+    d: d
+  };
+}
+
+function preparePostWhereclause(date, slug) {
   // build search dates
-  var searchstart = new Date(y, m - 1, d);
-  var searchend = new Date(y, m - 1, d, 23, 59, 59);
+  var searchstart = new Date(Date.UTC(date.y, date.m - 1, date.d));
+  var searchend = new Date(Date.UTC(date.y, date.m - 1, date.d, 23, 59, 59));
   
-  // find post by date and title
-  var whereparams = {
-      slug: req.params.slug,
+  // return where clause structure
+  return {
+      slug: slug,
       created: { $gte: searchstart },
       created: { $lte: searchend }
   };
+}
+
+// detail route
+app.get('/:year/:month/:day/:slug', function(req, res, next) {
+  // parse params as integers
+  var dateparts = parseDateInts(req.params);
+  if (!dateparts)
+    return next(new NotFound('Blogpost konnte nicht gefunden werden'));
   
-  BlogPost.findOne().where(whereparams).run(function(err, post) {
+  var whereClause = preparePostWhereclause(dateparts, req.params.slug);
+  BlogPost.findOne().where(whereClause).run(function(err, post) {
     if (!post)
       return next(new NotFound('Blogpost konnte nicht gefunden werden'));
     else {
@@ -273,7 +291,46 @@ app.get('/:year/:month/:day/:slug', function(req, res, next) {
   });
 });
 
-// tag search route
+// save comment
+app.post('/:year/:month/:day/:slug/comment', function(req, res) {  
+  var dateparts = parseDateInts(req.params);
+  if (!dateparts)
+    return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+  
+  var whereClause = preparePostWhereclause(dateparts, req.params.slug);
+  BlogPost.findOne().where(whereClause).run(function(err, post) {
+    if (!post)
+      return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+    else {
+      // append comment
+      var comment = {
+          author: req.body.comment.author,
+          body: req.body.comment.body,
+          title: req.body.comment.title,
+          date: new Date()
+      };
+      inspect(comment);
+      post.comments.$push(comment);
+      
+      function commentCreationFailed() {
+        req.flash('error', 'Kommentar konnte nicht gespeichert werden');
+        res.render('blogposts/detail', {
+          locals: { post: post }
+        });
+      }
+      
+      post.save(function(err) {
+        if (err)
+          return commentCreationFailed();
+
+        req.flash('info', 'Danke! Dein Kommentar wurde gespeichert.');
+        res.redirect('/' + req.params.year + '/' + req.params.month + '/' + req.params.day + '/' + req.params.slug + '/');
+      }); 
+    }
+  });
+});
+
+//tag search route
 app.get('/tags/:tag', function(req, res) {
   // find blogposts matching requested tag
   
@@ -302,11 +359,6 @@ app.get('/tags', function(req, res) {
   };
   
   // TODO: implement some way to get mapReduce'd collection using mongoose
-  
-});
-
-// save comment
-app.post('/:year/:month/:day/:slug/comment', function(req, res) {
   
 });
 
