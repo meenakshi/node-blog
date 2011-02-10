@@ -23,7 +23,11 @@ html
   	        a(href='/contact') Kontakt
   	      li.spacer &nbsp;
           li.entry
+            - if (isLoggedIn) {
+            a(href='/logout') Logout
+            - } else {
             a(href='/login') Login
+            - }
   	    ul#subscribe
           li.twitter
   	        a(href='http://twitter.com/schaermu')|Follow on Twitter

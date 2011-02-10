@@ -113,7 +113,7 @@ function authFromLoginToken(req, res, next) {
       res.redirect('/login');
       return;
     }
-    
+    console.log(token);
     User.findOne({ email: token.email }, function(err, user) {
       if (user) {
         req.session.user_id = user.id;
@@ -132,11 +132,12 @@ function authFromLoginToken(req, res, next) {
 }
 
 function loadUser(req, res, next) {
-  if (app.set('disableAuthentication'))
+  if (app.set('disableAuthentication') === true)
     next();
   else {
     if (req.session.user_id) {
       User.findById(req.session.user_id, function(err, user) {
+        console.log(user);
         if (user) {
           req.currentUser = user;
           next();
@@ -184,7 +185,7 @@ app.post('/login', function(req, res) {
 });
 
 // logout user
-app.get('/logout', function(req, res) {
+app.get('/logout', loadUser, function(req, res) {
   if (req.session) {
     LoginToken.remove({ email: req.currentUser.email }, function() {});
     res.clearCookie('logintoken');

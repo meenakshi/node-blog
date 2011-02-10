@@ -52,5 +52,8 @@ exports.dynamicHelpers = {
       }
     });
     return html;
+  },
+  isLoggedIn: function(req, res){
+      return (req.session.user_id);
   }
 };
