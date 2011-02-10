@@ -113,7 +113,7 @@ function authFromLoginToken(req, res, next) {
       res.redirect('/login');
       return;
     }
-    console.log(token);
+
     User.findOne({ email: token.email }, function(err, user) {
       if (user) {
         req.session.user_id = user.id;
@@ -137,7 +137,6 @@ function loadUser(req, res, next) {
   else {
     if (req.session.user_id) {
       User.findById(req.session.user_id, function(err, user) {
-        console.log(user);
         if (user) {
           req.currentUser = user;
           next();
@@ -361,11 +360,10 @@ app.post('/post/create', loadUser, function(req, res) {
   }
 
   post.save(function(err) {
-    if (err) {
-      console.log(err);
+    if (err)
       return postCreationFailed();
-    }
-    req.flash('info', 'Post created');
+
+    req.flash('info', 'Post erstellt');
     res.redirect('/');
   });
 });
@@ -385,18 +383,49 @@ app.del('/post/:id', loadUser, function(req, res) {
 });
 
 // update blog post
-app.put('/post/:id', loadUser, function(req, res) {
-  
+app.put('/post/edit/:id', loadUser, function(req, res, next) {
+  BlogPost.findById(req.params.id, function(err, bp) {
+    if (!bp)
+      return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+    else {
+      bp.title = req.body.blogpost.title;
+      bp.preview = req.body.blogpost.preview;
+      bp.body = req.body.blogpost.body;
+      bp.tags = req.body.blogpost.tags.split(',');
+      bp.modified = new Date();
+      
+      function postUpdateFailed() {
+        req.flash('error', 'Fehler beim updaten des Posts');
+        res.render('blogpost/edit', {
+          locals: {
+            post: bp
+          }
+        });
+      }
+
+      bp.save(function(err) {
+        if (err)
+          return postUpdateFailed();
+        
+        req.flash('info', 'Post ge&auml;ndert');
+        res.redirect('/');
+      });
+    }
+  });
 });
 
 // render update form
-app.get('/post/edit/:id', loadUser, function(req, res) {
-  Blogpost.findById(req.params.id, function(bp) {
-    res.render('blogpost/edit', {
-      locals: {
-        post: bp
-      }      
-    });
+app.get('/post/edit/:id', loadUser, function(req, res, next) {
+  BlogPost.findById(req.params.id, function(err, bp) {
+    if (!bp)
+      return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+    else {
+      res.render('blogpost/edit', {
+        locals: {
+          post: bp
+        }
+      });
+    }
   });
 });
 

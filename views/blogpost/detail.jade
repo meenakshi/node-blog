@@ -11,3 +11,11 @@ div.post
       =post.readablemonth
   div.post-content
     =post.body
+  - if (isLoggedIn) {
+  div.admin
+    ul
+      li
+        a(href='/post/edit/' + post.id) Bearbeiten
+      li
+        a.delete-post(href='#') L&ouml;schen
+  - }
