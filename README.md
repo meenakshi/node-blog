@@ -15,8 +15,7 @@ as my personal blog!**
 - node.js (tested using development branch, should run on stable release too)
 - mongoose (current stable, `npm install mongoose`)
 - express (current stable, `npm install express`)
-  - *Sidenote*: the current stable branch of `connect` (express' http middleware) ships with
-  `qs-0.0.3`, which has a small glitch concerning form body decoding (see [this pull request](https://github.com/aeosynth/node-querystring/commit/70caef1cf8b718c03e10a590d3dca6caba4638e6))
+- connect-mongodb (current stable `npm install connect-mongodb`)
 - jade (current stable, `npm install jade`)
 - stylus (current stable, `npm install stylus`)
 

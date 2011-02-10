@@ -1,0 +1,2 @@
+form(method='post', action='/user/create')
+  != partial('userfields', { locals: { post: user.doc, title: 'Neuen Benutzer erfassen' }})

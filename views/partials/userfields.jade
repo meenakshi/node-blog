@@ -1,0 +1,15 @@
+fieldset
+  legend= title
+  ol
+    li
+      label(for='user[email]') Email Adresse:
+      input(name='user[email]', size=50, value=user.email || '')
+    li
+      label(for='user[name]') Benutzername:
+      input(name='user[name]', size=50, value=user.name || '')
+    li
+      label(for='user[password]') Passwort:
+      input(type='password', name='user[password]', size=50, value=user.password || '')
+    li.submit
+      div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+        span#submit-button.ui-button-text Erstellen

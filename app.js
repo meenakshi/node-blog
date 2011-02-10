@@ -5,9 +5,14 @@ var express = require('express'),
   models = require('./models'),
   inspect = require('inspect'),
   stylus = require('stylus'),
+  mongostore = require('connect-mongodb'),
   sys = require('sys'),
+  fs = require('fs'),
+  crypto = require('crypto'),
   db,
-  BlogPost;
+  BlogPost,
+  User,
+  LoginToken;
 
 // create server object
 var app = module.exports = express.createServer();
@@ -23,29 +28,11 @@ function compile(str, path, fn) {
     .render(fn);
 }
 
-// configure server instance
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  // set jade as default view engine
-  app.set('view engine', 'jade');
-  // set stylus as css compile engine
-  app.use(stylus.middleware(
-    { src: __dirname + '/stylus', dest: __dirname + '/public', compile: compile }
-  ));
-  app.use(express.bodyDecoder());
-  app.use(express.cookieDecoder());
-  app.use(express.session({ secret: 'DFKhsdhfus9(JN)(*ri3n9n' }));
-  app.use(express.methodOverride());
-  app.use(app.router);
-  // use express logger
-  app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
-  app.use(express.staticProvider(__dirname + '/public'));
-});
-
-// configure environment
+//configure environment
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/schaermu-blog-dev');
   app.set('port', 3000);
+  //app.set('disableAuthentication', true);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
@@ -60,9 +47,30 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-// configure models
+// configure server instance
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  // set jade as default view engine
+  app.set('view engine', 'jade');
+  // set stylus as css compile engine
+  app.use(stylus.middleware(
+    { src: __dirname + '/stylus', dest: __dirname + '/public', compile: compile }
+  ));
+  app.use(express.bodyDecoder());
+  app.use(express.cookieDecoder());
+  app.use(express.session({ store: mongostore(app.set('connstring')), secret: 'topsecret' }));
+  app.use(express.methodOverride());
+  app.use(app.router);
+  // use express logger
+  app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
+  app.use(express.staticProvider(__dirname + '/public'));
+});
+
+//configure models
 models.defineModels(mongoose, function() {
   app.BlogPost = BlogPost = mongoose.model('BlogPost');
+  app.User = User = mongoose.model('User');
+  app.LoginToken = LoginToken = mongoose.model('LoginToken');
   db = mongoose.connect(app.set('connstring'));
 });
 
@@ -97,8 +105,97 @@ app.error(function(err, req, res) {
   });
 });
 
-// Routes
-// service routes
+// authentication methods
+function authFromLoginToken(req, res, next) {
+  var cookie = JSON.parse(req.cookies.logintoken);
+  LoginToken.findOne({ email: cookie.email, token: cookie.token, series: cookie.series }, function(err, token) {
+    if (!token) {
+      res.redirect('/login');
+      return;
+    }
+    
+    User.findOne({ email: token.email }, function(err, user) {
+      if (user) {
+        req.session.user_id = user.id;
+        req.currentUser = user;
+        
+        token.token = token.randomToken();
+        token.save(function(){
+          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+          next();
+        });
+      } else {
+        res.redirect('/login');
+      }
+    });
+  });
+}
+
+function loadUser(req, res, next) {
+  if (app.set('disableAuthentication'))
+    next();
+  else {
+    if (req.session.user_id) {
+      User.findById(req.session.user_id, function(err, user) {
+        if (user) {
+          req.currentUser = user;
+          next();
+        } else {
+          res.redirect('/login');
+        }
+      });
+    } else if (req.cookies.logintoken) {
+      authFromLoginToken(req, res, next);
+    } else {
+      res.redirect('/login');
+    }
+  }
+}
+
+/**
+ * Login routes
+ */
+// render login form
+app.get('/login', function(req, res) {
+  res.render('login', {
+    locals: { user: new User() }
+  });
+});
+
+// login user
+app.post('/login', function(req, res) {
+  User.findOne({ email: req.body.user.email }, function(err, user) {
+    if (user && user.authenticate(req.body.user.password)) {
+      req.session.user_id = user.id;
+      
+      if (req.body.remember_me) {
+        var loginToken = new LoginToken({ email: user.email });
+        loginToken.save(function() {
+          res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+        });
+      }
+      
+      res.redirect('/');
+    } else {
+      req.flash('error', 'Login fehlgeschlagen');
+      res.redirect('/login');
+    }
+  });
+});
+
+// logout user
+app.get('/logout', function(req, res) {
+  if (req.session) {
+    LoginToken.remove({ email: req.currentUser.email }, function() {});
+    res.clearCookie('logintoken');
+    req.session.destroy(function() {});
+  }
+  res.redirect('/');
+});
+
+/**
+ * RESTful service routes
+ */
 // fetch latest entries
 app.get('/rest/:format/latest', function(req, res) {
   BlogPost.find({}, ['title', 'created', 'slug'], { limit: 5 }).sort('created', -1).run(function(err, posts) {
@@ -119,7 +216,9 @@ app.get('/rest/:format/latest', function(req, res) {
   });
 });
 
-
+/**
+ * Public Blog routes
+ */
 // index route, load page 1 of blog
 app.get('/', function(req, res){
   // find first 10 blogposts
@@ -206,13 +305,43 @@ app.get('/tags', function(req, res) {
   
 });
 
-// COMMENT: create comment
+// save comment
 app.post('/:year/:month/:day/:slug/comment', function(req, res) {
   
 });
 
-// ADMIN: create new blog post
-app.post('/create', function(req, res) {  
+/**
+ * Administrative Blog routes
+ */
+// save new user
+app.post('/user/create', loadUser, function(req, res) {
+  var user = new User(req.body.user);
+  
+  function userSaveFailed() {
+    req.flash('error', 'Fehler beim speichern des Benutzers');
+    res.render('users/create', {
+      locals: { user: user }
+    });
+  }
+  
+  user.save(function(err) {
+    if (err) userSaveFailed();
+    req.flash('info', 'Benutzer erfolgreich erstellt');
+    res.redirect('/');
+  });
+});
+
+// render user create form
+app.get('/user/create', loadUser, function(req, res) {
+  res.render('users/create', {
+    locals: {
+      user: new User()
+    }
+  });
+});
+
+// save new blog post
+app.post('/post/create', loadUser, function(req, res) {  
   var post = new BlogPost();
   post.title = req.body.blogpost.title;
   post.preview = req.body.blogpost.preview;
@@ -239,8 +368,9 @@ app.post('/create', function(req, res) {
     res.redirect('/');
   });
 });
-app.get('/create', function(req, res) {
-  // TODO: implement basic authentication
+
+// render creation form
+app.get('/post/create', loadUser, function(req, res) {
   res.render('blogpost/create', {
     locals: {
       post: new BlogPost()
@@ -248,19 +378,20 @@ app.get('/create', function(req, res) {
   });
 });
 
-// ADMIN: delete blog post
-app.del('/post/:id', function(req, res) {
+// delete blog post
+app.del('/post/:id', loadUser, function(req, res) {
   
 });
 
-// ADMIN: update blog post
-app.put('/post/:id', function(req, res) {
+// update blog post
+app.put('/post/:id', loadUser, function(req, res) {
   
 });
-app.get('/post/:id', function(req, res) {
-  // TODO: implement basic authentication
+
+// render update form
+app.get('/post/edit/:id', loadUser, function(req, res) {
   Blogpost.findById(req.params.id, function(bp) {
-    res.render('blogpost/update', {
+    res.render('blogpost/edit', {
       locals: {
         post: bp
       }      

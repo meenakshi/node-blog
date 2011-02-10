@@ -1,0 +1,13 @@
+form(method='post', action='/login')
+  fieldset
+    legend Login
+    ol
+      li
+        label(for='blogpost[email]') E-Mail Adresse:
+        input(name='user[email]', size=40, value=user.email || '')
+      li
+        label(for='blogpost[password]') Passwort:
+        input(name='user[password]', size=40, value=user.password || '')
+      li.submit
+        div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+          span#submit-button.ui-button-text Login
