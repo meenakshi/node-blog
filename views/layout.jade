@@ -21,13 +21,21 @@ html
   	      li.spacer &nbsp;
   	      li.entry
   	        a(href='/contact') Kontakt
-  	      li.spacer &nbsp;
-          li.entry
+  	      li.spacer &nbsp;&nbsp;&nbsp;
+          li.entry.admin
             - if (isLoggedIn) {
             a(href='/logout') Logout
             - } else {
             a(href='/login') Login
             - }
+          - if (isLoggedIn) {
+          li.spacer &nbsp;
+          li.entry.admin
+            a(href='/post/create') New Post
+          li.spacer &nbsp;
+          li.entry.admin
+            a(href='/user/create') New User
+          - }
   	    ul#subscribe
           li.twitter
   	        a(href='http://twitter.com/schaermu')|Follow on Twitter
