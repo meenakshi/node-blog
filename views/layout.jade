@@ -14,7 +14,7 @@ html
   	  div#header
   	    h1
           a(href='/') schaermu.ch
-        h2 Schaermu's personal blog
+        h2 LHTN - oder wie ich lernte, zu knoten...
   	    ul#nav
   	      li.entry
   	        a(href='/') Blog
@@ -36,11 +36,22 @@ html
           li.entry.admin
             a(href='/user/create') New User
           - }
-  	    ul#subscribe
-          li.twitter
-  	        a(href='http://twitter.com/schaermu')|Follow on Twitter
-          li.rss
-            a(href='/rss')|Subscribe by RSS
+          li.spacer &nbsp;
+          li.versiontag
+            a(href='https://github.com/schaermu/node-blog', target='_blank')#{nameAndVersion(appName, version)}
+  	    ul#socialize
+          li
+  	        a(href='http://twitter.com/schaermu', target='_blank')
+              img(src='/images/twitter_32.png', alt='Follow me on Twitter!', title='Follow me on twitter!')
+          li
+            a(href='/rss', target='_blank')
+              img(src='/images/rss_32.png', alt='Subscribe by RSS!', title='Subscribe by RSS!')
+          li
+            a(href='https://github.com/schaermu/', target='_blank')
+              img(src='/images/github_32.png', alt='Fork me on GitHub!', title='Fork me on GitHub!')
+          li
+            a(href='https://www.lastfm.de/user/schaermu/', target='_blank')
+              img(src='/images/lastfm_32.png', alt='Check my Last.FM profile!', title='Check my Last.FM profile!')
   	  div#content
   	    div#main
   	      !{flashMessages}
