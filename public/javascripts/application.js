@@ -31,6 +31,31 @@
     
     // hook up submit buttons to submit function
     $('#submit-button').click(submitForm);
+    
+    // hookup delete code
+    $('.delete-post').click(function(e) {
+      e.preventDefault();
+      if (confirm('Soll dieses Posting wirklich gelöscht werden?')) {
+        var element = $(this),
+            form = $('<form></form>');
+        
+        form
+          .attr({
+            method: 'POST',
+            action: '/post/' + element.attr('rel')
+          })
+          .hide()
+          .append('<input type="hidden" />')
+          .find('input')
+          .attr({
+            'name': '_method',
+            'value': 'delete'
+          })
+          .end();
+        $('body').append(form);
+        form.submit();
+      }
+    });
   });
   
   function submitForm() {

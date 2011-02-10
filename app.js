@@ -84,7 +84,6 @@ function NotFound(msg) {
 sys.inherits(NotFound, Error);
 
 app.error(function(err, req, res, next) {
-  inspect(err);
   if (err instanceof NotFound) {
     res.render('404.jade', {
       locals: {
@@ -309,7 +308,6 @@ app.post('/:year/:month/:day/:slug/comment', function(req, res) {
           title: req.body.comment.title,
           date: new Date()
       };
-      inspect(comment);
       post.comments.$push(comment);
       
       function commentCreationFailed() {
@@ -420,7 +418,7 @@ app.post('/post/create', loadUser, function(req, res) {
   });
 });
 
-// render creation form
+// render post creation form
 app.get('/post/create', loadUser, function(req, res) {
   res.render('blogpost/create', {
     locals: {
@@ -430,8 +428,21 @@ app.get('/post/create', loadUser, function(req, res) {
 });
 
 // delete blog post
-app.del('/post/:id', loadUser, function(req, res) {
-  
+app.del('/post/:id', loadUser, function(req, res, next) {
+  BlogPost.findById(req.params.id, function(err, bp) {
+    if (!bp)
+      return next(new NotFound('Blogpost konnte nicht gefunden werden'));
+    else {
+      bp.remove(function(err) {
+        if (err)
+          return next(new Error('Blogpost konnte nicht gelöscht werden'));
+        else {
+          req.flash('info', 'Post wurde gelöscht');
+          res.redirect('/');
+        }
+      });
+    }
+  });
 });
 
 // update blog post

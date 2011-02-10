@@ -34,7 +34,7 @@ FlashMessage.prototype = {
     },
     
     toHtml: function() {
-      return '<div class="ui-widget">' +
+      return '<div class="ui-widget flash">' +
                '<div style="padding: 0pt 0.7em;" class="' + this.stateClass + ' ui-corner-all">' +
                '<p><span style="float: left; margin-right: 0.3em;" class="ui-icon ' + this.icon + '"></span>' +
                this.messages.join('<br />') + '</p>' +

@@ -22,6 +22,6 @@ as my personal blog!**
 In addition to the packages mentioned above you'll need a running mongodb instance (check out the [MongoDB website](http://www.mongodb.org) 
 for further instructions)
 
-## Useful packages used
+## Useful packages
 - nodemon (for auto-restarting node instance on file changes, `npm install nodemon`)
 - inspect (for debugging object graphs, `npm install inspect`)

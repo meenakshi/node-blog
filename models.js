@@ -32,7 +32,7 @@ function defineModels(mongoose, fn) {
       var hour = this.date.getHours();
       var minute = this.date.getMinutes();
       return (hour < 10 ? '0' +  hour : hour) + ':' + (minute < 10 ? '0' +  minute : minute);
-    })
+    });
   
   /**
    * Blogpost model

@@ -17,7 +17,7 @@ div.post.no-bottom-margin
       li
         a(href='/post/edit/' + post.id + '/') Bearbeiten
       li
-        a.delete-post(href='#') L&ouml;schen
+        a.delete-post(href='#', rel=post.id) L&ouml;schen
   - }
 div.new-comment
   form(method='post', action='comment')
