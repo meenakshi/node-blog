@@ -1,4 +1,3 @@
-
 // require dependant modules
 var express = require('express'),
   mongoose = require('mongoose'),
@@ -221,6 +220,7 @@ app.get('/rss', function(req, res, next) {
       return next(new Error('Fehler beim auslesen der Posts'));
     else {
       // render rss template using posts
+      res.contentType('.rss');
       res.render('xml/rss', {
         layout: false,
         selfclosetags: false,

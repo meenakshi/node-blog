@@ -3,7 +3,7 @@ var crypto = require('crypto');
 function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema,
       ObjectId = Schema.ObjectId;
-
+  
   /**
    * Comment model
    * 
@@ -53,8 +53,8 @@ function defineModels(mongoose, fn) {
   var monthNames = [ 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',
                      'August', 'September', 'Oktober', 'November', 'Dezember' ];
   var monthNamesShort = [ 'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul',
-                     'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ];
-  
+                          'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ];
+    
   // define virtual getter method for id (readable string)
   BlogPost.virtual('id')
     .get(function() {
@@ -70,6 +70,11 @@ function defineModels(mongoose, fn) {
       return '/' + year + '/' + (month < 10 ? '0' + month : month) + '/' + (day < 10 ? '0' + day : day) + '/' + this.slug + '/';
     });
   
+  BlogPost.virtual('rfc822created')
+    .get(function() {
+      return this.created.toGMTString();
+    });
+    
   BlogPost.virtual('readabledate')
     .get(function() {
       var year = this.created.getFullYear();

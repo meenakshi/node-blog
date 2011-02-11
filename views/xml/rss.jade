@@ -1,6 +1,7 @@
 !!! xml
-rss(version="2.0")
+rss(version="2.0", xmlns:atom="http://www.w3.org/2005/Atom")
   channel
+    atom:link(href="http://www.schaermu.ch/rss", rel="self", type="application/rss+xml")
     title|schaermu.ch - LHTN
     description|Ein Blog über node.js, Javascript und neue Webtechnologien
     link http://www.schaermu.ch/
@@ -9,6 +10,6 @@ rss(version="2.0")
       title= posts[i].title
       description= posts[i].preview
       link http://www.schaermu.ch#{posts[i].url}
-      guid= posts[i].id
-      pubDate= posts[i].created 
+      guid http://www.schaermu.ch#{posts[i].url}
+      pubDate= posts[i].rfc822created 
     - }
