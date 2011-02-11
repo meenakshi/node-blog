@@ -3,7 +3,6 @@
 var express = require('express'),
   mongoose = require('mongoose'),
   models = require('./models'),
-  inspect = require('inspect'),
   stylus = require('stylus'),
   mongostore = require('connect-mongodb'),
   sys = require('sys'),
