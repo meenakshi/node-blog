@@ -258,6 +258,15 @@ app.get('/page/:page/', function(req, res) {
   });
 });
 
+//about route
+app.get('/about', function(req, res){
+  res.render('about', {
+    locals: {
+      
+    }
+  });
+});
+
 function parseDateInts(params) {
   var y = parseInt(params.year);
   var m = parseInt(params.month.trimLeft('0'));
