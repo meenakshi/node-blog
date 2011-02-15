@@ -1,0 +1,3 @@
+[submodule "vendor/node-markdown"]
+	path = vendor/node-markdown
+	url = https://schaermu@github.com/schaermu/node-markdown.git
