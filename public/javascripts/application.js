@@ -54,10 +54,19 @@
         form.submit();
       }
     });
+    
+    // enable code highlighting    
+    $.beautyOfCode.init({
+      defaults: { gutter: true },
+      brushes: ["Xml", "JScript", "CSharp"]
+    });    
   });
   
   function submitForm() {
-    document.forms[0].submit();
+    var form = $(document.forms[0]);
+    var validator = form.validate();
+    if (validator.form())
+      form.submit();
   }
   
   // manage flash messages

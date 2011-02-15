@@ -8,7 +8,7 @@ rss(version="2.0", xmlns:atom="http://www.w3.org/2005/Atom")
     - for (var i in posts) {
     item
       title= posts[i].title
-      description= posts[i].preview
+      description= posts[i].rsstext
       link http://www.schaermu.ch#{posts[i].url}
       guid http://www.schaermu.ch#{posts[i].url}
       pubDate= posts[i].rfc822created 

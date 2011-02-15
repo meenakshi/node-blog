@@ -2,19 +2,36 @@ fieldset
   legend= title
   ol
     li
-      label(for='blogpost[title]') Titel:
-      input(name='blogpost[title]', size=50, value=post.title || '')
+      label(for='blogpost[title]') Titel
+      em *
+      input.required(name='blogpost[title]', size=70, value=post.title || '')
     li
-      label(for='blogpost[preview]') Anrisstext:
-      textarea(name='blogpost[preview]', rows=10, cols=50)
+      label(for='blogpost[rsstext]') RSS-Version
+      em *
+      textarea.required(name='blogpost[rsstext]', rows=5, cols=70)
+        =post.rsstext || ''
+    li
+      label(for='blogpost[preview]') Anrisstext
+      em *
+      textarea.required(name='blogpost[preview]', rows=14, cols=50)
         =post.preview || ''
+      .markdown-help
+        | <b>Markdown-Hilfe</b><ul>
+        | <li>Full HTML-Support</li>
+        | <li>Codeblocks mit &lt;code class="code language-[sprache]"&gt;</li>
+        | <li>Link: [Linktext](http://www.example.org "Title")</li>
+        | <li>*text* = <em>text</em></li>
+        | <li>**text** = <strong>text</strong></li>
+        | </ul>
     li
-      label(for='blogpost[body]') Text:
-      textarea(name='blogpost[body]', rows=10, cols=70)
+      label(for='blogpost[body]') Text
+      em *
+      textarea.required(name='blogpost[body]', rows=10, cols=90)
         =post.body || ''
     li
       label(for='blogpost[tags]') Tags:
-      input(name='blogpost[tags]', size=50, value=post.tags || '')
+      em &nbsp;
+      input(name='blogpost[tags]', size=70, value=post.tags || '')
     li.submit
       div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
         span#submit-button.ui-button-text Speichern

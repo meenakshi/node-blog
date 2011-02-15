@@ -12,7 +12,7 @@
       span
         =posts[idx].readablemonth
     div.post-content
-      =posts[idx].preview
+      != posts[idx].previewParsed
 - }
 - } else {
   div.noposts

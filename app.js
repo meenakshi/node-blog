@@ -338,7 +338,7 @@ app.post('/:year/:month/:day/:slug/comment', function(req, res) {
       
       function commentCreationFailed() {
         req.flash('error', 'Kommentar konnte nicht gespeichert werden');
-        res.render('blogposts/detail', {
+        res.render('blogpost/detail', {
           locals: { post: post }
         });
       }
@@ -420,6 +420,7 @@ app.get('/user/create', loadUser, function(req, res) {
 app.post('/post/create', loadUser, function(req, res) {  
   var post = new BlogPost();
   post.title = req.body.blogpost.title;
+  post.rsstext = req.body.blogpost.rsstext;
   post.preview = req.body.blogpost.preview;
   post.body = req.body.blogpost.body;
   post.created = new Date();
@@ -477,7 +478,9 @@ app.put('/post/edit/:id', loadUser, function(req, res, next) {
     if (!bp)
       return next(new NotFound('Blogpost konnte nicht gefunden werden'));
     else {
+      console.log(req.body);
       bp.title = req.body.blogpost.title;
+      bp.rsstext = req.body.blogpost.rsstext;
       bp.preview = req.body.blogpost.preview;
       bp.body = req.body.blogpost.body;
       bp.tags = req.body.blogpost.tags.split(',');

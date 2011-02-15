@@ -14,17 +14,41 @@ fieldset
       clear left
       width 100%
       padding-bottom 10px
+      em
+        vertical-align top
+        margin-right 1em
+        float left
     li.submit
       float none
       width auto
       padding-left 120px
+
+input.error,textarea
+  float left
+input.error,textarea.error
+  border red 2px solid
 label
   float left
   width 100px
-  margin-right 1em
   text-align right
   font bold 16px Delicious-Bold, Georgia, Serif
+label.error
+  display none !important
 legend
   margin-left 1em
   color colors-fonttitle
   font bold 20px Delicious-Bold, Georgia, Serif
+.markdown-help
+  float left
+  color colors-background
+  border 1px solid colors-darkbackground
+  background colors-mediumbackground
+  padding 5px
+  margin-left 5px
+  em
+    float none
+    margin 0
+  ul
+    list-style disc inside
+    li
+      padding 0

@@ -10,7 +10,7 @@ div.post.no-bottom-margin
     span
       =post.readablemonth
   div.post-content
-    =post.body
+    !=post.bodyParsed
   - if (isLoggedIn) {
   div.admin
     ul
@@ -19,23 +19,6 @@ div.post.no-bottom-margin
       li
         a.delete-post(href='#', rel=post.id) L&ouml;schen
   - }
-div.new-comment
-  form(method='post', action='comment')
-    fieldset
-      legend|Neuer Kommentar
-      ol
-        li
-          label(for='comment[author]') Name:
-          input(name='comment[author]', size=50)
-        li
-          label(for='comment[title]') Titel:
-          input(name='comment[title]', size=50)
-        li
-          label(for='comment[body]') Kommentar:
-          textarea(name='comment[body]', rows=5, cols=40)
-        li.submit
-          div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
-            span#submit-button.ui-button-text Senden
 - if (post.comments.length > 0) {
 .comments
   - for (var idx in post.comments.toObject()) {
@@ -48,6 +31,32 @@ div.new-comment
         =post.comments[idx].readableday
         span
           =post.comments[idx].readablemonth
-    div.content=post.comments[idx].body
+    div.content!=post.comments[idx].bodyParsed
   - }
 - }
+div.new-comment
+  form(method='post', action='comment')
+    fieldset
+      legend|Neuer Kommentar
+      ol
+        li
+          label(for='comment[author]') Name:
+          em *
+          input.required(name='comment[author]', size=50)
+        li
+          label(for='comment[title]') Titel:
+          em &nbsp;
+          input(name='comment[title]', size=50)
+        li
+          label(for='comment[body]') Kommentar:
+          em *
+          textarea.required(name='comment[body]', rows=11, cols=40)
+          .markdown-help
+            | <b>Markup-Hilfe</b><ul>
+            | <li>Link: [Linktext](http://www.example.org)</li>
+            | <li>*text* = <em>text</em></li>
+            | <li>**text** = <b>text</b></li>
+            | </ul>
+        li.submit
+          div.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+            span#submit-button.ui-button-text Senden

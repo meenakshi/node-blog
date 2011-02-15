@@ -1,9 +1,62 @@
 var crypto = require('crypto');
 
+function convertBasicMarkup(input, allowHtml) {
+  var strongRe = /[*]{2}([^*]+)[*]{2}/gm;
+  var emRe = /[*]{1}([^*]+)[*]{1}/gm;
+  var linkRe = /\[([^\]]*)\]\(([^\)]*?)\)/gm;
+  var nlRe = /\r\n/gm;
+  var crRe = /\r/gm;
+  
+  // special re's to revert linebreaks from <br />
+  var codeRe = /(<code\b[^>]*>(.*?)<\/code>)/gm;
+  
+  // cleanup newlines
+  input = input.replace(nlRe, "\n");
+  input = input.replace(crRe, "\n");
+  
+  // strip existing html before inserting breaks/markup
+  if (!allowHtml) {
+    // strip html
+    input = input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  
+  // convert newlines to breaks
+  input = input.replace(/\n/gm, '<br />');
+  
+  // replace basic markup
+  input = input.replace(strongRe, function(whole, m1, m2, m3) {
+    return '<strong>' + m1 + '</strong>';
+  });
+  
+  input = input.replace(emRe, function(whole, m1, m2, m3) {
+    return '<em>' + m1 + '</em>';
+  });
+  
+  input = input.replace(linkRe, function(whole, m1, m2) {
+    // fix up protocol
+    if (!m2.match(/(http(s?)|ftp(s?)):\/\//gm))
+      // prepend http as default
+      m2 = 'http://' + m2;
+    return '<a href=\"' + m2 + '\" target=\"_blank\">' + m1 + '</a>';
+  });
+  
+  // revert code blocks
+  input = input.replace(codeRe, function(whole, m1) {
+    return m1.replace(/<br \/>/gm, '\n');
+  });
+    
+  return input;
+}
+
 function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema,
       ObjectId = Schema.ObjectId;
-  
+    
   /**
    * Comment model
    * 
@@ -16,6 +69,7 @@ function defineModels(mongoose, fn) {
     body: String
   });
   
+  // register virtual members
   Comment.virtual('readableday')
     .get(function() {
       var day = this.date.getDate();      
@@ -34,6 +88,20 @@ function defineModels(mongoose, fn) {
       return (hour < 10 ? '0' +  hour : hour) + ':' + (minute < 10 ? '0' +  minute : minute);
     });
   
+  Comment.virtual('bodyParsed')
+    .get(function() {
+      return convertBasicMarkup(this.body, false);
+    });
+  
+  // register validators
+  Comment.path('author').validate(function(val) {
+    return val.length > 0;
+  }, 'AUTHOR_MISSING');
+  
+  Comment.path('body').validate(function(val) {
+    return val.length > 0;
+  }, 'BODY_MISSING');
+  
   /**
    * Blogpost model
    * 
@@ -43,6 +111,7 @@ function defineModels(mongoose, fn) {
     title: String,
     preview: String,
     body: String,
+    rsstext: String,
     slug: String,
     created: Date,
     modified: Date,
@@ -93,7 +162,34 @@ function defineModels(mongoose, fn) {
     .get(function() {
       return monthNamesShort[this.created.getMonth()];
     });
-   
+  
+  BlogPost.virtual('previewParsed')
+    .get(function() {
+      return convertBasicMarkup(this.preview, true);
+    });
+
+  BlogPost.virtual('bodyParsed')
+    .get(function() {
+      return convertBasicMarkup(this.body, true);
+    });
+  
+  // register validators
+  BlogPost.path('title').validate(function(val) {
+    return val.length > 0;
+  }, 'TITLE_MISSING');
+  
+  BlogPost.path('preview').validate(function(val) {
+    return val.length > 0;
+  }, 'PREVIEW_MISSING');
+  
+  BlogPost.path('rsstext').validate(function(val) {
+    return val.length > 0;
+  }, 'RSSTEXT_MISSING');
+  
+  BlogPost.path('body').validate(function(val) {
+    return val.length > 0;
+  }, 'BODY_MISSING');
+  
   // generate a proper slug value for blogpost
   function slugGenerator (options){
     options = options || {};
