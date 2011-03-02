@@ -1,3 +1,5 @@
+require.paths.unshift('vendor/jade/lib');
+
 // require dependant modules
 var express = require('express'),
   mongoose = require('mongoose'),
@@ -7,6 +9,7 @@ var express = require('express'),
   sys = require('sys'),
   fs = require('fs'),
   crypto = require('crypto'),
+  //cluster = require('cluster'),
   db,
   BlogPost,
   User,
@@ -29,18 +32,18 @@ function compile(str, path, fn) {
 //configure environment
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/schaermu-blog-dev');
-  app.set('port', 3000);
+  app.set('port', 9001);
   //app.set('disableAuthentication', true);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('test', function() {
-  app.set('port', 80);
+  app.set('port', 6001);
   app.set('db-uri', 'mongodb://localhost/schaermu-blog-test');
 });
 
 app.configure('production', function(){
-  app.set('port', 80);
+  app.set('port', 3001);
   app.set('connstring', 'mongodb://localhost/schaermu-blog');
   app.use(express.errorHandler()); 
 });
@@ -195,7 +198,7 @@ app.get('/logout', loadUser, function(req, res) {
  */
 // fetch latest entries
 app.get('/rest/:format/latest', function(req, res) {
-  BlogPost.find({}, ['title', 'created', 'slug'], { limit: 5 }).sort('created', -1).run(function(err, posts) {
+  BlogPost.find({}, ['title', 'created', 'slug'], { limit: 5 }).sort('created', -1).execFind(function(err, posts) {
     switch (req.params.format) {
       case 'json':
         var docs = [];
@@ -215,7 +218,7 @@ app.get('/rest/:format/latest', function(req, res) {
 
 // rss feed route
 app.get('/rss', function(req, res, next) {
-  BlogPost.find().limit(50).sort('created', -1).run(function(err, posts) {
+  BlogPost.find().limit(50).sort('created', -1).execFind(function(err, posts) {
     if (err)
       return next(new Error('Fehler beim auslesen der Posts'));
     else {
@@ -238,7 +241,7 @@ app.get('/rss', function(req, res, next) {
 // index route, load page 1 of blog
 app.get('/', function(req, res){
   // find first 10 blogposts
-  BlogPost.find().limit(10).sort('created', -1).run(function(err, posts) {
+  BlogPost.find().limit(10).sort('created', -1).execFind(function(err, posts) {
     res.render('index', {
       locals: {
         posts: posts
@@ -303,7 +306,7 @@ app.get('/:year/:month/:day/:slug', function(req, res, next) {
     return next(new NotFound('Blogpost konnte nicht gefunden werden'));
   
   var whereClause = preparePostWhereclause(dateparts, req.params.slug);
-  BlogPost.findOne().where(whereClause).run(function(err, post) {
+  BlogPost.findOne().where(whereClause).execFind(function(err, post) {
     if (!post)
       return next(new NotFound('Blogpost konnte nicht gefunden werden'));
     else {
@@ -323,7 +326,7 @@ app.post('/:year/:month/:day/:slug/comment', function(req, res) {
     return next(new NotFound('Blogpost konnte nicht gefunden werden'));
   
   var whereClause = preparePostWhereclause(dateparts, req.params.slug);
-  BlogPost.findOne().where(whereClause).run(function(err, post) {
+  BlogPost.findOne().where(whereClause).execFind(function(err, post) {
     if (!post)
       return next(new NotFound('Blogpost konnte nicht gefunden werden'));
     else {
@@ -478,7 +481,6 @@ app.put('/post/edit/:id', loadUser, function(req, res, next) {
     if (!bp)
       return next(new NotFound('Blogpost konnte nicht gefunden werden'));
     else {
-      console.log(req.body);
       bp.title = req.body.blogpost.title;
       bp.rsstext = req.body.blogpost.rsstext;
       bp.preview = req.body.blogpost.preview;
@@ -524,5 +526,11 @@ app.get('/post/edit/:id', loadUser, function(req, res, next) {
 // Only listen on $ node app.js
 if (!module.parent) {
   app.listen(app.set('port'));
+  // TODO: implement cluster as soon as its stable
+  /* cluster(app)
+    .set('workers', 2)
+    .use(cluster.debug())
+    .use(cluster.pidfiles('/var/run/node-blog'))
+    .listen(app.set('port')); */
   console.log("Express server listening on port %d", app.address().port);
 }
